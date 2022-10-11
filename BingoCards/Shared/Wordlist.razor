@@ -1,0 +1,29 @@
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<div class="bingo-wordlist">
+    <textarea id="wordlist" name="wordlist" @bind-value:event="onchange" @oninput="SetStoredWordList" @bind-value="WordList"></textarea>
+</div>
+<button class="btn btn-primary" @onclick="SetStoredWordList">Save your word list</button>
+
+@code {
+    //Limit to 75 words
+    //Find better parsing than a pipe.  Json?-
+    string _DefaultWordList = "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30";
+
+    private string WordList { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        WordList = await localStorage.GetItemAsync<string>("bingo-wordlist");
+        if (String.IsNullOrEmpty(WordList))
+        {
+            WordList = _DefaultWordList;
+        }
+    }
+
+
+    private void SetStoredWordList()
+    {
+        localStorage.SetItemAsync("bingo-wordlist", WordList);
+    }
+}

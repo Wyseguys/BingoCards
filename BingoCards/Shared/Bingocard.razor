@@ -1,0 +1,34 @@
+﻿@if(@game != null)
+{
+    <h3>Your Bingo Card: @game.Name</h3>
+    @if(game.Squares != null)
+    {
+        int i = 0;
+        for (int rows = 0; rows < game.Rows; rows++)
+        {
+            <div class="row">
+                @for (int cols = 0; cols < game.Columns; cols++)
+                {
+                    var squareNumber = i;
+
+                    <div class="col">
+                        <div data-sqid="@i" @key="i" @onclick="@(e => MakeSquareSelected(e, squareNumber))" class="bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")">@game.Squares[i].Value;</div>
+                    </div>
+
+                    i++;
+                }
+            </div>
+        }
+    }
+}
+
+@code {
+    [CascadingParameter]
+    protected BingoGame game { get; set; }
+
+
+    private void MakeSquareSelected(EventArgs e, int SquareID)
+    {
+        game.Squares[SquareID].Selected = ! game.Squares[SquareID].Selected;
+    }
+}
