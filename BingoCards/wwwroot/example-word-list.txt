@@ -1,0 +1,45 @@
+﻿Encourage... NAY! DEMAND
+|'Link in the chat'
+|Loud angry typing
+|Voice echo/feedback
+|'Hi! Who just joined?'
+|Awkward silence
+|'Sorry, I was muted'
+|'Can you see my screen?'
+|Child or animal noise
+|'Let's take this offline'
+|No one is prepared
+|Mid-sentence drop off
+|'Next slide please'
+|'I have a hard stop...'
+|'Can you email that?'
+|'Can you hear me?'
+|Referencing 'tracking'
+|Cough/Sneeze
+|Weather talk
+|Pet talk
+|'No, sorry. you go first'
+|'Didn't catch that. Can you repeat.'
+|Creepy Darth Vader breathing
+|'Sorry I'm late
+|'Hello?  Hello?'
+|Forgot to stop screen share
+|'I think there's a lag.'
+|'MERNIN'
+|Nominated as note taker
+|Doorbell ring
+|Hot Mic background conversation
+|Hot Mic Eating/drinking noises
+|'I'd like to piggyback on that..'
+|Any mention of Coffee
+|Someone being told they are on mute
+|Someone being told they didn't screenshare
+|Sharing the wrong screen
+|'I hate this stupid software'
+|Dialing in from their phone
+|Microphone out of place
+|Doing introductions
+|'Is everybody here?'
+|'Can you put that in the Chat'
+|'I'm having internet issues'
+|'Can we schedule another meeting?'

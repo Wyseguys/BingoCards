@@ -64,13 +64,3 @@ a, .btn-link {
     }
 
 
-.bingo-square {
-    height: 150px;
-    width: 150px;
-    border: 1px solid red;
-}
-
-.bingo-square-selected {
-    background-color: #990000;
-    color: #ffffff;
-}

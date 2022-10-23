@@ -19,7 +19,7 @@
         {
             Words = new List<string>() { "You", "forgot", "to", "setup", "your", "bingo", "game", "my", "friend" };
         }
-        public BingoGame(List<string> wordlist, string? name = "dude", string? freespacelabel = "FREE SPACE")
+        public BingoGame(List<string> wordlist, string name = "dude", string freespacelabel = "FREE SPACE")
         {
             Words = wordlist ?? throw new ArgumentNullException(nameof(wordlist));
             if (!IsSaneGame()) throw new Exception("Word list should be 9, 16 or 25 entries");

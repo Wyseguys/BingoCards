@@ -1,0 +1,43 @@
+﻿.bingo-card h3{
+    background-color: gold;
+    padding: 1em;
+    color: black;
+}
+
+.bingo-gameboard {
+    display:inline-block;
+    padding: 1em;
+}
+
+.player-name{
+    color: firebrick;
+}
+
+.bingo-gameboard-row {
+    height: 152px;
+}
+
+.bingo-gameboard-col {
+    width: 152px;
+    display: inline;
+}
+
+.bingo-square {
+    height: 145px;
+    width: 145px;
+    border: 4px solid black;
+    padding: .5em;
+    display:inline-block;
+    text-align: center;
+
+}
+
+.square-label {
+    font-size: 1em;
+}
+
+.bingo-square-selected {
+    background-color: #990000;
+    color: #ffffff;
+    font-size: 1.3em;
+}

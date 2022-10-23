@@ -5,83 +5,112 @@
 
 <PageTitle>Make a Bingo Card</PageTitle>
 
-<h1>Make a Bingo Card</h1>
+<h1>Lets Play a Bingo Card</h1>
 
-<EditForm Model="@game">
-<p>
-    <p>
-        <label>
-            Who are you?
-            <InputText @bind-Value="PlayerName" />
-        </label>
-    </p>
-    <label>
-        How Many Squares?:
-        <InputSelect @bind-Value="HowManySquares">
-            <option value="9">9 (small)</option>
-            <option value="16">16 (medium)</option>
-            <option value="25">25 (large)</option>
-        </InputSelect>
-    </label>
 
-        
-    <label>
-        Include a Free Space?:
-        <InputCheckbox @bind-Value="IncludeFreeSpace" />
-    </label>
-</p>
-</EditForm>
-<p>Free Square Label<input type="text" @bind=FreeSquareLabel /></p>
+    <EditForm Model="@game">
+        <p>
+            <label>
+                Who are you?
+                <InputText @bind-Value="PlayerName" />
+            </label>
+        </p>
+        <p>
+            <label>
+                How Many Squares?:
+                <InputSelect @bind-Value="HowManySquares">
+                    <option value="9">9 (small)</option>
+                    <option value="16">16 (medium)</option>
+                    <option value="25">25 (large)</option>
+                </InputSelect>
+            </label>
+        </p>
+        <p>
+            <label>
+                Include a Free Space?:
+                <InputCheckbox @bind-Value="IncludeFreeSpace" />
+            </label>
+            <label>
+            Free Square Label?
+            <InputText @bind-Value="FreeSquareLabel" />
+            </label>
+        </p>   
+    </EditForm>
+    <button class="btn btn-primary" @onclick="StartNewGame">Make a new Bingo Card to Play</button>
+    @if(ShowGameLoad){
+        <button class="btn btn-small btn-success" @onclick="LoadExistingGame">Load your existing game</button>
+    }
 
-<button class="btn btn-primary" @onclick="NewBingoCard">Make a new Bingo Card to Play</button>
-@if(@game != null)
-{
-    <h3>Your Bingo Card: @game.Name</h3>
     @if(game.Squares != null)
     {
-        int i = 0;
-        for (int rows = 0; rows < game.Rows; rows++)
-        {
-            <div class="row">
-                @for (int cols = 0; cols < game.Columns; cols++)
+        <div class="bingo-card border border-3 rounded rounded-3 position-absolute">
+            <h3>Your Bingo Card: <span class="player-name">@game.Name</span></h3>
+            <div class="bingo-message">
+                @if(@game.IsWinner)
                 {
-                    var squareNumber = i;
-
-                    <div class="col">
-                        <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")">@game.Squares[i].Value</div>
+                    <div class="alert alert-success d-flex" role="alert">
+                        <div>
+                            <strong>You Won My Dude!</strong> But at least you were paying attention, right?
+                        </div>
                     </div>
-
-                    i++;
+                }
+                @if (@game.IsBlackout)
+                {
+                    <div class="alert alert-danger d-flex" role="alert">
+                        <div>
+                        <strong>You Won a Blackout My Dude!!</strong> My condolences....
+                        </div>
+                    </div>
                 }
             </div>
-        }
+            <div class="bingo-gameboard">
+                @{
+                    int i = 0;
+                    for (int rows = 0; rows<game.Rows; rows++)
+                    {
+                        <div class="bingo-gameboard-row row">
+                        @for (int cols = 0; cols < game.Columns; cols++)
+                        {
+                            var squareNumber = i;
+                                <div class="bingo-gameboard-col col">
+                                <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="border border-3 rounded rounded-3 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
+                                </div>
+                            i++;
+                        }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
     }
 
-
-    @if(@game.IsWinner)
-    {
-        <h1>You Won My Dude</h1>
-    }
-
-
-    @if (@game.IsBlackout)
-    {
-        <h1>You Won a Blackout My Dude</h1>
-    }
-}
 
 
 @code {
-    public BingoGame game { get; set; }
+    BingoGame game = new BingoGame();
     public int HowManySquares { get; set; } = 16;
-    public string PlayerName { get; set; } = "Bigshot over here";
+    public string PlayerName { get; set; } = "Some Bigshot";
     public string FreeSquareLabel { get; set; } = "It's been a thin slice of heaven";
     public bool IncludeFreeSpace { get; set; } = true;
+    public bool ShowGameLoad { get; set; } = false;
 
-
-
-    public void NewBingoCard()
+    public void StartNewGame()
     {
+        //if there is a game, ask if starting over?
+        if(true)
+        {
+            NewBingoCard();
+        }
+    }
+
+    private void NewBingoCard()
+    {
+        if ( ! localStorage.ContainKey("bingo-wordlist"))
+        { 
+            //Send them to setup a word list
+            nm.NavigateTo("/");
+        }
+
         //destroy any previous bingo cards
         localStorage.RemoveItem("bingo-game");
 
@@ -105,15 +134,11 @@
             }
         }
 
-
         //Setup the Game
         game = new BingoGame(NewBingoCard, PlayerName, FreeSquareLabel);
 
         //Save the list to local storage
         localStorage.SetItem("bingo-game", game);
-
-        //Go to the card display
-        //nm.NavigateTo("play");
     }
 
     private void ToggleSquareSelected(EventArgs e, int SquareID)
@@ -126,14 +151,25 @@
         }        
     }
 
-    protected override async Task OnInitializedAsync()
+    private void LoadExistingGame()
     {
-        if(game == null)
+        if(localStorage.ContainKey("bingo-game")) 
         {
             game = localStorage.GetItem<BingoGame>("bingo-game");
-            PlayerName = game.Name;
-            IncludeFreeSpace = game.HasFreeSpace;
-            HowManySquares = game.Squares.Count;
+            if(game != null)
+            {
+                PlayerName = game.Name;
+                IncludeFreeSpace = game.HasFreeSpace;
+                HowManySquares = game.Squares.Count;
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(localStorage.ContainKey("bingo-game"))
+        {
+            ShowGameLoad = true;
         }
     }
 
