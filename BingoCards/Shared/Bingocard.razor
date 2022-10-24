@@ -1,6 +1,6 @@
 ﻿@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
-<div class="bingo-card border border-3 rounded rounded-3 position-absolute">
+<div class="bingo-card border border-10 rounded rounded-3 position-absolute">
     <h3>Your Bingo Card: <span class="player-name">@game.Name</span></h3>
     <div class="bingo-message">
         @if (@game.IsWinner)
@@ -30,7 +30,7 @@
                     {
                         var squareNumber = i;
                         <div class="bingo-gameboard-col col">
-                            <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="border border-3 rounded rounded-3 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
+                            <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="border border-1 rounded rounded-9 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
                         </div>
                         i++;
                     }
