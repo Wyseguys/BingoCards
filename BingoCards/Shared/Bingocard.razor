@@ -1,34 +1,56 @@
-﻿@if(@game != null)
-{
-    <h3>Your Bingo Card: @game.Name</h3>
-    @if(game.Squares != null)
-    {
-        int i = 0;
-        for (int rows = 0; rows < game.Rows; rows++)
+﻿@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+<div class="bingo-card border border-3 rounded rounded-3 position-absolute">
+    <h3>Your Bingo Card: <span class="player-name">@game.Name</span></h3>
+    <div class="bingo-message">
+        @if (@game.IsWinner)
         {
-            <div class="row">
-                @for (int cols = 0; cols < game.Columns; cols++)
-                {
-                    var squareNumber = i;
-
-                    <div class="col">
-                        <div data-sqid="@i" @key="i" @onclick="@(e => MakeSquareSelected(e, squareNumber))" class="bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")">@game.Squares[i].Value;</div>
-                    </div>
-
-                    i++;
-                }
+            <div class="alert alert-success d-flex" role="alert">
+                <div>
+                    <strong>You Won My Dude!</strong> But at least you were paying attention, right?
+                </div>
             </div>
         }
-    }
-}
+        @if (@game.IsBlackout)
+        {
+            <div class="alert alert-danger d-flex" role="alert">
+                <div>
+                    <strong>You Won a Blackout My Dude!!</strong> My condolences....
+                </div>
+            </div>
+        }
+    </div>
+    <div class="bingo-gameboard">
+        @{
+            int i = 0;
+            for (int rows = 0; rows < game.Rows; rows++)
+            {
+                <div class="bingo-gameboard-row row">
+                    @for (int cols = 0; cols < game.Columns; cols++)
+                    {
+                        var squareNumber = i;
+                        <div class="bingo-gameboard-col col">
+                            <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="border border-3 rounded rounded-3 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
+                        </div>
+                        i++;
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
 
 @code {
-    [CascadingParameter]
-    protected BingoGame game { get; set; }
+    [Parameter]
+    public BingoGame game { get; set; } = new BingoGame();
 
-
-    private void MakeSquareSelected(EventArgs e, int SquareID)
+    private void ToggleSquareSelected(EventArgs e, int SquareID)
     {
-        game.Squares[SquareID].Selected = ! game.Squares[SquareID].Selected;
+        if (game == null) return;
+
+        game.Squares![SquareID].Selected = !game.Squares[SquareID].Selected;
+        game.Updated = DateTime.Now;
+        localStorage.SetItem("bingo-game", game);
     }
 }
