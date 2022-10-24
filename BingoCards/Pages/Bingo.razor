@@ -7,7 +7,6 @@
 
 <h1>Lets Play a Bingo Card</h1>
 
-
     <EditForm Model="@game">
         <p>
             <label>
@@ -36,7 +35,9 @@
             </label>
         </p>   
     </EditForm>
+    
     <button class="btn btn-primary" @onclick="StartNewGame">Make a new Bingo Card to Play</button>
+
     @if(ShowGameLoad){
         <button class="btn btn-small btn-success" @onclick="LoadExistingGame">Load your existing game</button>
     }
@@ -121,10 +122,10 @@
         List<string> RandomizedWords = PossibleWords.Split("|").ToList();
         RandomizedWords.Shuffle();
 
-        //Pick top 9
+        //Pick top words from the random liust
         List<string> NewBingoCard = RandomizedWords.Take(HowManySquares).ToList();
 
-        //Replace #5 with free square if the list is odd
+        //Replace middle with free square if the list is odd
         if(IncludeFreeSpace)
         {
             if ((NewBingoCard.Count % 2) != 0)
@@ -143,12 +144,11 @@
 
     private void ToggleSquareSelected(EventArgs e, int SquareID)
     {
-        if(game != null)
-        {
-            game.Squares![SquareID].Selected = !game.Squares[SquareID].Selected;
-            game.Updated = DateTime.Now;
-            localStorage.SetItem("bingo-game", game);
-        }        
+        if (game == null) return;
+
+        game.Squares![SquareID].Selected = !game.Squares[SquareID].Selected;
+        game.Updated = DateTime.Now;
+        localStorage.SetItem("bingo-game", game);
     }
 
     private void LoadExistingGame()
@@ -172,5 +172,4 @@
             ShowGameLoad = true;
         }
     }
-
 }
