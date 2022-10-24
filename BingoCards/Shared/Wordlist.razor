@@ -1,17 +1,56 @@
 ﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-<div class="bingo-wordlist">
-    <textarea id="wordlist" name="wordlist" @bind-value:event="onchange" @oninput="SetStoredWordList" @bind-value="WordList"></textarea>
+<div class="row">
+    <div class="col-7">
+        <div class="vstack gap-1">
+            @foreach (string word in words)
+            {
+                <div class="bg-light border">
+                    <button class="btn btn-light" @onclick="() => RemoveWord(word)">X</button>
+                    <span class="bingo-word">@word</span>
+                </div>
+            }
+        </div>
+        <div class="bingo-wordlist invisible">
+            <textarea class="form-control" rows="5" id="wordlist" name="wordlist" @bind-value:event="onchange" @oninput="SetStoredWordList" @bind-value="WordList"></textarea>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="row">
+            <div class="col">
+                <div class="vstack gap-2 col-md-5 mx-auto">
+                    <form @onsubmit="EnterWord">
+                        <input placeholder="New Word" @ref="textInput" @bind="NewWord"/>
+                        <button class="btn btn-success  col-md-5" @onclick="AddWord">Add</button>
+                    </form>
+                </div>
+
+                <div class="vstack gap-2 col-md-5 mx-auto">
+                    <button class="btn btn-link" @onclick="SetDefaultWordList">Use Default Word List</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="vstack gap-2 col-md-5 mt-5 mx-auto">
+                    <button class="btn btn-lg btn-primary" @onclick="SetStoredWordList">Save your word list</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<button class="btn btn-primary" @onclick="SetStoredWordList">Save your word list</button>
-<button class="btn btn-link" @onclick="SetDefaultWordList">Use Default Word List</button>
+
+
+
 
 @code {
     //Limit to 75 words
     //Find better parsing than a pipe.  Json?-
     string _DefaultWordList = "Encourage... NAY! DEMAND|'Link in the chat'|Loud angry typing|Voice echo/feedback|'Hi! Who just joined?'|Awkward silence|'Sorry, I was muted'|'Can you see my screen?'|Child or animal noise|'Let's take this offline'|No one is prepared|Mid-sentence drop off|'Next slide please'|'I have a hard stop...'|'Can you email that?'|'Can you hear me?'|Referencing 'tracking'|Cough/Sneeze|Weather talk|Pet talk|'No, sorry. you go first'|'Didn't catch that. Can you repeat.'|Creepy Darth Vader breathing|'Sorry I'm late|'Hello?  Hello?'|Forgot to stop screen share|'I think there's a lag.'|'MERNIN'|Nominated as note taker|Doorbell ring|Hot Mic background conversation|Hot Mic Eating/drinking noises|'I'd like to piggyback on that..'|Any mention of Coffee|Someone being told they are on mute|Someone being told they didn't screenshare|Sharing the wrong screen|'I hate this stupid software'|Dialing in from their phone|Microphone out of place|Doing introductions|'Is everybody here?'|'Can you put that in the Chat'|'I'm having internet issues'|'Can we schedule another meeting?'";
-
     private string WordList { get; set; } = "";
+    private List<string> words = new();
+    private string? NewWord;
+    ElementReference textInput;
 
     protected override async Task OnInitializedAsync()
     {
@@ -20,16 +59,60 @@
         {
             WordList = _DefaultWordList;
         }
+        words = ReadWords(WordList);
     }
+
+    private void RemoveWord(string word)
+    {
+        words.Remove(word);
+        WriteWords();
+    }
+
+    private void AddWord()
+    {
+        if (!string.IsNullOrWhiteSpace(NewWord))
+        {
+            words.Add(NewWord);
+            NewWord = string.Empty;
+        }
+        WriteWords();
+        textInput.FocusAsync();
+    }
+
+
+    public void EnterWord()
+    {
+        AddWord();
+    }
+
+
+    private List<string> ReadWords(String ListOfWords)
+    {
+        if (String.IsNullOrEmpty(ListOfWords)) return new List<string>();
+
+        return ListOfWords.Split("|").ToList();
+    }
+
+    private void WriteWords()
+    {
+        if(words.Count <= 0) return; 
+
+        WordList = string.Join("|", words.ToArray());
+    }
+
 
     private void SetDefaultWordList()
     {
+        words = ReadWords(_DefaultWordList);
+        WriteWords();
         localStorage.SetItemAsync("bingo-wordlist", _DefaultWordList);
     }
 
 
     private void SetStoredWordList()
     {
+        words = ReadWords(WordList);
+        WriteWords();
         localStorage.SetItemAsync("bingo-wordlist", WordList);
     }
 }
