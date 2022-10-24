@@ -4,6 +4,15 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>none</AnalysisLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <RunAOTCompilation>True</RunAOTCompilation>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <RunAOTCompilation>True</RunAOTCompilation>
   </PropertyGroup>
 
   <ItemGroup> 
