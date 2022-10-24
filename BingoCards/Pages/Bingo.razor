@@ -86,8 +86,15 @@
         }
         else
         {
-            //Randomize the list
+            //Make sure we have at least 25 words
             List<string> RandomizedWords = PossibleWords.Split("|").ToList();
+            
+            if (RandomizedWords.Count < 25)
+            {
+                nm.NavigateTo("setup");
+            }
+
+            //Randomize the list
             RandomizedWords.Shuffle();
 
             //Pick top words from the random liust

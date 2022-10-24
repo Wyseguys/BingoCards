@@ -30,7 +30,7 @@
                     {
                         var squareNumber = i;
                         <div class="bingo-gameboard-col col">
-                            <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="border border-1 rounded rounded-9 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
+                            <div data-sqid="@i" @key="i" @onclick="@(e => ToggleSquareSelected(e, squareNumber))" class="text-wrap border border-1 rounded rounded-9 bingo-square @(game.Squares[i].Selected ? "bingo-square-selected" : "")"><span class="square-label">@game.Squares[i].Value</span></div>
                         </div>
                         i++;
                     }
