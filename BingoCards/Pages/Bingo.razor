@@ -1,4 +1,4 @@
-﻿@page "/bingo"
+﻿@page "/game"
 
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 @inject NavigationManager nm
@@ -109,7 +109,7 @@
         if ( ! localStorage.ContainKey("bingo-wordlist"))
         { 
             //Send them to setup a word list
-            nm.NavigateTo("/");
+            nm.NavigateTo("setup");
         }
 
         //destroy any previous bingo cards
@@ -118,28 +118,36 @@
         //Read the list
         string PossibleWords = localStorage.GetItem<string>("bingo-wordlist");
 
-        //Randomize the list
-        List<string> RandomizedWords = PossibleWords.Split("|").ToList();
-        RandomizedWords.Shuffle();
-
-        //Pick top words from the random liust
-        List<string> NewBingoCard = RandomizedWords.Take(HowManySquares).ToList();
-
-        //Replace middle with free square if the list is odd
-        if(IncludeFreeSpace)
+        if (String.IsNullOrEmpty(PossibleWords))
         {
-            if ((NewBingoCard.Count % 2) != 0)
+            nm.NavigateTo("setup");
+        }
+        else
+        {
+            //Randomize the list
+            List<string> RandomizedWords = PossibleWords.Split("|").ToList();
+            RandomizedWords.Shuffle();
+
+            //Pick top words from the random liust
+            List<string> NewBingoCard = RandomizedWords.Take(HowManySquares).ToList();
+
+            //Replace middle with free square if the list is odd
+            if (IncludeFreeSpace)
             {
-                int cntSq = Convert.ToInt32(Math.Floor(Convert.ToDouble(NewBingoCard.Count / 2)));
-                NewBingoCard[cntSq] = "FREE SPACE";
+                if ((NewBingoCard.Count % 2) != 0)
+                {
+                    int cntSq = Convert.ToInt32(Math.Floor(Convert.ToDouble(NewBingoCard.Count / 2)));
+                    NewBingoCard[cntSq] = "FREE SPACE";
+                }
             }
+
+            //Setup the Game
+            game = new BingoGame(NewBingoCard, PlayerName, FreeSquareLabel);
+
+            //Save the list to local storage
+            localStorage.SetItem("bingo-game", game);
         }
 
-        //Setup the Game
-        game = new BingoGame(NewBingoCard, PlayerName, FreeSquareLabel);
-
-        //Save the list to local storage
-        localStorage.SetItem("bingo-game", game);
     }
 
     private void ToggleSquareSelected(EventArgs e, int SquareID)
